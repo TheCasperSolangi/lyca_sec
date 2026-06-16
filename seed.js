@@ -4,82 +4,61 @@ const Country = require('./models/Country');
 
 const MONGO_URI = process.env.MONGO_URI;
 
-const seedPakistan = async () => {
+// Minimal world countries dataset (you can extend this list or import full ISO dataset)
+const countries = [
+  { name: 'Afghanistan', code: 'AF', country_flag: '🇦🇫' },
+  { name: 'Albania', code: 'AL', country_flag: '🇦🇱' },
+  { name: 'Algeria', code: 'DZ', country_flag: '🇩🇿' },
+  { name: 'Argentina', code: 'AR', country_flag: '🇦🇷' },
+  { name: 'Australia', code: 'AU', country_flag: '🇦🇺' },
+  { name: 'Austria', code: 'AT', country_flag: '🇦🇹' },
+  { name: 'Bangladesh', code: 'BD', country_flag: '🇧🇩' },
+  { name: 'Belgium', code: 'BE', country_flag: '🇧🇪' },
+  { name: 'Brazil', code: 'BR', country_flag: '🇧🇷' },
+  { name: 'Canada', code: 'CA', country_flag: '🇨🇦' },
+  { name: 'China', code: 'CN', country_flag: '🇨🇳' },
+  { name: 'Denmark', code: 'DK', country_flag: '🇩🇰' },
+  { name: 'Egypt', code: 'EG', country_flag: '🇪🇬' },
+  { name: 'France', code: 'FR', country_flag: '🇫🇷' },
+  { name: 'Germany', code: 'DE', country_flag: '🇩🇪' },
+  { name: 'India', code: 'IN', country_flag: '🇮🇳' },
+  { name: 'Indonesia', code: 'ID', country_flag: '🇮🇩' },
+  { name: 'Iran', code: 'IR', country_flag: '🇮🇷' },
+  { name: 'Iraq', code: 'IQ', country_flag: '🇮🇶' },
+  { name: 'Italy', code: 'IT', country_flag: '🇮🇹' },
+  { name: 'Japan', code: 'JP', country_flag: '🇯🇵' },
+  { name: 'Malaysia', code: 'MY', country_flag: '🇲🇾' },
+  { name: 'Mexico', code: 'MX', country_flag: '🇲🇽' },
+  { name: 'Netherlands', code: 'NL', country_flag: '🇳🇱' },
+  { name: 'New Zealand', code: 'NZ', country_flag: '🇳🇿' },
+  { name: 'Nigeria', code: 'NG', country_flag: '🇳🇬' },
+  { name: 'Pakistan', code: 'PK', country_flag: '🇵🇰' },
+  { name: 'Philippines', code: 'PH', country_flag: '🇵🇭' },
+  { name: 'Russia', code: 'RU', country_flag: '🇷🇺' },
+  { name: 'Saudi Arabia', code: 'SA', country_flag: '🇸🇦' },
+  { name: 'South Africa', code: 'ZA', country_flag: '🇿🇦' },
+  { name: 'South Korea', code: 'KR', country_flag: '🇰🇷' },
+  { name: 'Spain', code: 'ES', country_flag: '🇪🇸' },
+  { name: 'Sri Lanka', code: 'LK', country_flag: '🇱🇰' },
+  { name: 'Turkey', code: 'TR', country_flag: '🇹🇷' },
+  { name: 'United Arab Emirates', code: 'AE', country_flag: '🇦🇪' },
+  { name: 'United Kingdom', code: 'GB', country_flag: '🇬🇧' },
+  { name: 'United States', code: 'US', country_flag: '🇺🇸' },
+  { name: 'Vietnam', code: 'VN', country_flag: '🇻🇳' },
+];
+
+const seedCountries = async () => {
   try {
     await mongoose.connect(MONGO_URI);
     console.log('MongoDB connected');
 
-    // Remove old Pakistan record if exists
-    await Country.deleteOne({ code: 'PK' });
+    // Clear existing data
+    await Country.deleteMany({});
 
-    // Helper function to convert array of strings to array of objects
-    const formatCities = (cities) => cities.map(name => ({ name }));
+    // Insert countries only (no states/cities)
+    await Country.insertMany(countries);
 
-    const pakistan = {
-      name: 'Pakistan',
-      code: 'PK',
-      country_flag: '🇵🇰',
-      states: [
-        {
-          name: 'Punjab',
-          code: 'PB',
-          cities: formatCities([
-            "Lahore","Faisalabad","Rawalpindi","Gujranwala","Multan","Sialkot","Bahawalpur","Sargodha",
-            "Sheikhupura","Rahim Yar Khan","Jhang","Kasur","Okara","Vehari","Mianwali","Attock",
-            "Chiniot","Dera Ghazi Khan","Muzaffargarh","Pakpattan","Gujrat","Toba Tek Singh","Bhakkar",
-            "Mandi Bahauddin","Narowal","Hafizabad","Khushab","Sahiwal","Khanewal","Layyah","Rajanpur",
-            "Lodhran","Chakwal","Mian Channu","Kharian","Talagang","Kot Addu","Chishtian","Burewala",
-            "Daska","Muridke","Khanpur","Kabirwala","Samundri","Jaranwala","Arifwala","Shahkot","Renala Khurd",
-            "Kot Momin","Mailsi","Chak Jhumra","Nankana Sahib","Ahmadpur East","Hasilpur","Dipalpur",
-            "Rajanpur City","Tandlianwala","Jampur","Mamu Kanjan","Sangla Hill","Fateh Jang","Kahuta",
-            "Gujar Khan","Shorkot","Mianwali City","Haroonabad","Mian Channu","Raiwind","Chak 132","Fazilpur",
-            "Sambrial","Kamalia","Gojra","Shahdadpur","Dinga","Wah Cantt"
-          ])
-        },
-        {
-          name: 'Sindh',
-          code: 'SD',
-          cities: formatCities([
-            "Karachi","Hyderabad","Sukkur","Larkana","Nawabshah","Mirpurkhas","Jacobabad","Khairpur",
-            "Dadu","Thatta","Badin","Shikarpur","Umerkot","Tando Adam","Sanghar","Kotri","Mehar","Matiari",
-            "Qambar","Dadu City","Hala","Benazirabad"
-          ])
-        },
-        {
-          name: 'Khyber Pakhtunkhwa',
-          code: 'KP',
-          cities: formatCities([
-            "Peshawar","Mardan","Abbottabad","Swat","Nowshera","Kohat","Charsadda","Mansehra",
-            "Haripur","Bannu","Dera Ismail Khan","Batkhela","Timergara"
-          ])
-        },
-        {
-          name: 'Balochistan',
-          code: 'BL',
-          cities: formatCities([
-            "Quetta","Gwadar","Turbat","Khuzdar","Chaman","Sibi","Zhob","Loralai"
-          ])
-        },
-        {
-          name: 'Azad Kashmir',
-          code: 'AJK',
-          cities: formatCities([
-            "Muzaffarabad","Mirpur"
-          ])
-        },
-        {
-          name: 'Islamabad',
-          code: 'ISB',
-          cities: formatCities([
-            "Islamabad"
-          ])
-        }
-      ]
-    };
-
-    await Country.create(pakistan);
-
-    console.log('✅ Pakistan (127 Cities) Seeded Successfully');
+    console.log(`✅ Seeded ${countries.length} countries successfully`);
     process.exit(0);
 
   } catch (error) {
@@ -88,4 +67,4 @@ const seedPakistan = async () => {
   }
 };
 
-seedPakistan();
+seedCountries();
